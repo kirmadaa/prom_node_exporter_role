@@ -1,0 +1,17 @@
+[Unit]
+Description=Prometheus Node Exporter Service
+After=network.target
+
+[Service]
+User=node_exporter
+Group=node_exporter
+Type=simple
+ExecStart=/opt/node_exporter-1.7.0.linux-amd64/node_exporter
+CPUAccounting=true
+MemoryAccounting=true
+CPUQuota=50%  # Set the desired CPU limit
+MemoryLimit=512M  # Set the desired memory limit
+
+[Install]
+WantedBy=multi-user.target
+
