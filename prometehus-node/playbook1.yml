@@ -1,7 +1,0 @@
----
-- name: Install Prometheus Node Exporter
-  hosts: target_servers
-  become: true
-  roles:
-    - prom_node
-
