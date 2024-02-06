@@ -1,0 +1,23 @@
+---
+# User details
+node_exporter_user:
+  name: node_exporter
+  comment: 'Prometheus Node Exporter User'
+  shell: /bin/false
+  system: yes
+
+# Architecture mapping
+architecture_mapping:
+  x86_64: amd64
+  aarch64: arm64
+
+node_exporter_download_url: "https://github.com/prometheus/node_exporter/releases/download/v1.7.0/node_exporter-1.7.0.linux-{{ architecture_mapping[ansible_architecture] }}.tar.gz"
+node_exporter_download_mode: '0644'
+node_exporter_download_dest: "/tmp/node_exporter-1.7.0.linux-{{ architecture_mapping[ansible_architecture] }}.tar.gz"
+node_exporter_extract_dest: "/opt"
+node_exporter_create_dest: "/opt/node_exporter-1.7.0.linux-{{ architecture_mapping[ansible_architecture] }}"
+node_exporter_permissions_mode: '0755'
+node_exporter_service_dest: "/etc/systemd/system/node_exporter.service"
+node_exporter_service_name: "node_exporter"
+systemd_reload_command: "systemctl --system daemon-reload"
+

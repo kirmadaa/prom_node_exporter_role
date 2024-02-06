@@ -1,0 +1,16 @@
+[Unit]
+Description=Prometheus Node Exporter Service
+After=network.target
+
+[Service]
+User={{ node_exporter_user.name }}
+Group={{ node_exporter_user.name }}
+Type=simple
+ExecStart={{ node_exporter_create_dest }}/node_exporter
+CPUAccounting=true
+MemoryAccounting=true
+CPUQuota=50%  # Set the desired CPU limit
+MemoryLimit=512M  # Set the desired memory limit
+
+[Install]
+WantedBy=multi-user.target

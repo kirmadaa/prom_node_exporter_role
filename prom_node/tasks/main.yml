@@ -1,0 +1,49 @@
+# my_role/tasks/main.yml
+
+- name: Create node_exporter user
+  ansible.builtin.user:
+    name: "{{ node_exporter_user.name }}"
+    comment: "{{ node_exporter_user.comment }}"
+    shell: "{{ node_exporter_user.shell }}"
+    system: "{{ node_exporter_user.system }}"
+
+- name: Define architecture mapping
+  set_fact: "{{ lookup('file', 'vars/main.yml') | from_yaml }}"
+
+- name: Download Prometheus Node Exporter AMD64 or ARM binary
+  ansible.builtin.get_url:
+    url: "{{ node_exporter_download_url }}"
+    dest: "{{ node_exporter_download_dest }}"
+    mode: "{{ node_exporter_download_mode }}"
+
+- name: Extract Node Exporter
+  ansible.builtin.unarchive:
+    src: "{{ node_exporter_download_dest }}"
+    dest: "{{ node_exporter_extract_dest }}"
+    remote_src: yes
+    creates: "{{ node_exporter_create_dest }}"
+
+- name: Set permissions
+  ansible.builtin.file:
+    path: "{{ node_exporter_create_dest }}"
+    state: directory
+    mode: "{{ node_exporter_permissions_mode }}"
+    owner: "{{ node_exporter_user.name }}"
+    group: "{{ node_exporter_user.name }}"
+    recurse: yes
+
+- name: Create systemd service
+  ansible.builtin.template:
+    src: "node_exporter.service.j2"
+    dest: "{{ node_exporter_service_dest }}"
+  notify:
+    - restart node_exporter
+
+- name: Start and enable Node Exporter service
+  ansible.builtin.service:
+    name: "{{ node_exporter_service_name }}"
+    state: started
+    enabled: yes
+  when: ansible_architecture == 'arm64' or ansible_architecture == 'amd64'
+
+
