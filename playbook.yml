@@ -1,0 +1,7 @@
+- name: Install and configure Prometheus Node Exporter
+  hosts: target_host
+  become: yes
+  tasks:
+    - name: Include prom_node
+      include_role:
+        name: prom_node
